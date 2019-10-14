@@ -196,7 +196,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop) {
 	width += 2;
 	loop += 1;
 
-	vector<vector<vector<int>>> boardNum(loop, vector<vector<int>>(height, vector<int>(width)));
+	vector<vector<vector<Literal>>> boardNum(loop, vector<vector<int>>(height, vector<int>(width)));
 
 	CNF cnf;
 
@@ -221,7 +221,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop) {
 	REP(k, loop - 1) {
 		REP(i,  height ) {
 			REP(j , width ) {
-				vector<int> count, tar;
+				vector<Literal> tar;
 				if (i > 0) tar.push_back(boardNum[k][i - 1][j]);
 				if (j > 0) tar.push_back(boardNum[k][i][j - 1]);
 				if (i < height - 1) tar.push_back(boardNum[k][i + 1][j]);
@@ -232,16 +232,39 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop) {
 				if (i > 0 && j < width - 1) tar.push_back(boardNum[k][i - 1][j + 1]);
 				if (i < height - 1 && j < width - 1) tar.push_back(boardNum[k][i + 1][j + 1]);
 
-				count = cnf.sum(tar);
+				REP(a, tar.size()) {//8C4
+					rep(b, a + 1, tar.size()) {
+						rep(c, b + 1, tar.size()) {
+							rep(d, c + 1, tar.size()) {
+								vector<Literal> buf = {-tar[a],-tar[b] ,-tar[c] ,-tar[d], -boardNum[k + 1][i][j] };
+								cnf.cls.push_back(buf);
+							}
 
-				int upper4 = cnf.Or(vector<int>(count.begin() + 2, count.end()));
+							vector<Literal> buf(tar);
+							buf[a] *= -1;
+							buf[b] *= -1;
+							buf[c] *= -1;
+							buf.push_back(boardNum[k + 1][i][j]);
+							cnf.cls.push_back(buf);
+						}
 
-				cnf.cls.push_back({ -count[0], -count[1], upper4, boardNum[k + 1][i][j] });
-				cnf.cls.push_back({ boardNum[k][i][j], count[0], -count[1], upper4, -boardNum[k + 1][i][j] });
-				cnf.cls.push_back({ -boardNum[k][i][j], count[0], -count[1], upper4, boardNum[k + 1][i][j] });
-				cnf.cls.push_back({ -count[0], count[1], upper4, -boardNum[k + 1][i][j] });
-				cnf.cls.push_back({ count[0], count[1], upper4, -boardNum[k + 1][i][j] });
-				cnf.cls.push_back({ -upper4, -boardNum[k + 1][i][j] });
+						vector<Literal> buf(tar);
+						buf[a] *= -1;
+						buf[b] *= -1;
+						buf.push_back(-boardNum[k][i][j]);
+						buf.push_back(boardNum[k + 1][i][j]);
+						cnf.cls.push_back(buf);
+
+						buf[buf.size() - 2] *= -1;
+						buf[buf.size() - 1] *= -1;
+						cnf.cls.push_back(buf);
+					}
+
+					vector<Literal> buf(tar);
+					buf.erase(buf.begin() + a);
+					buf.push_back(-boardNum[k + 1][i][j]);
+					cnf.cls.push_back(buf);
+				}
 			}
 		}
 
@@ -362,7 +385,8 @@ vector<vector<vector<int>>> simulateLifegame(vector<vector<int>> board, int time
 
 
 int main() {
-	int w = 7, h = 7, loop = 5;
+	int w = 7, h = 7, loop = 3;
+	cin >> w >> h >> loop;
 	vector<vector<vector<int>>> board = searchPattern(h,w,loop);
 
 	REP(k, loop + 1) {
