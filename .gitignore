@@ -59,6 +59,10 @@ artifacts/
 # StyleCop
 StyleCopReport.xml
 
+# DIMACS input file
+*.dimacs
+*.dimacs_aloc
+
 # Files built by Visual Studio
 *_i.c
 *_p.c
