@@ -363,6 +363,7 @@ vector<vector<vector<int>>> simulateLifegame(vector<vector<int>> board, int time
 
 int main() {
 	int w = 7, h = 7, loop = 5;
+	cin >> w >> h >> loop;
 	vector<vector<vector<int>>> board = searchPattern(h,w,loop);
 
 	REP(k, loop + 1) {
