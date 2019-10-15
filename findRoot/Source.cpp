@@ -14,10 +14,10 @@ vector<vector<int>> deathGame(vector<vector<int>> board) {
 	int height = 2 + board.size();
 	int width = 2 + board[0].size();
 
-	vector<vector<Literal>> targetpat(height, vector<int>(width, FALSE));
+	vector<vector<Literal>> targetpat(height, vector<int>(width, CNF::False));
 
 
-	vector<vector<Literal>> boardNum(vector<vector<int>>(height, vector<int>(width, FALSE)));
+	vector<vector<Literal>> boardNum(vector<vector<int>>(height, vector<int>(width, CNF::False)));
 
 	CNF cnf;
 
@@ -26,9 +26,9 @@ vector<vector<int>> deathGame(vector<vector<int>> board) {
 			boardNum[i][j] = cnf.getNewVar();
 
 			if (board[i - 1][j - 1])
-				targetpat[i][j] = TRUE;
+				targetpat[i][j] = CNF::True;
 			else
-				targetpat[i][j] = FALSE;
+				targetpat[i][j] = CNF::False;
 		}
 	}
 
@@ -105,7 +105,7 @@ vector<vector<int>> deathGame(vector<vector<int>> board) {
 		}
 	}
 
-	if (ans[TRUE] == false) return {};
+	if (ans[CNF::True] == false) return {};
 
 	return ret;
 }

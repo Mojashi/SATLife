@@ -19,7 +19,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 	width += 2 + moveX;
 	loop += 1;
 
-	vector<vector<vector<Literal>>> boardNum(loop, vector<vector<int>>(height, vector<int>(width, FALSE)));
+	vector<vector<vector<Literal>>> boardNum(loop, vector<vector<int>>(height, vector<int>(width, CNF::False)));
 
 	CNF cnf;
 

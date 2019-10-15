@@ -22,7 +22,7 @@ vector<vector<vector<int>>> simulateLifegame(vector<vector<int>> board, int time
 		REP(i, height) {
 			REP(j, width) {
 				if (i == height - 1 || i == 0 || j == 0 || j == width - 1) {
-					boardNum[k][i][j] = FALSE;
+					boardNum[k][i][j] = CNF::False;
 				}
 				else {
 					if (k != 0) {
@@ -30,9 +30,9 @@ vector<vector<vector<int>>> simulateLifegame(vector<vector<int>> board, int time
 					}
 					else {
 						if (board[i - 1][j - 1])
-							boardNum[0][i][j] = TRUE;
+							boardNum[0][i][j] = CNF::True;
 						else
-							boardNum[0][i][j] = FALSE;
+							boardNum[0][i][j] = CNF::False;
 					}
 				}
 			}

@@ -13,9 +13,9 @@ typedef vector<Literal> Clause;
 
 struct CNF {
 public:
-#define NONE 0
-#define FALSE -1
-#define TRUE 1
+	static const Literal None = 0;
+	static const Literal False = -1;
+	static const Literal True = 1;
 	vector<Clause> cls;
 	int varCount = 0;
 
@@ -83,8 +83,8 @@ public:
 	}
 
 	pair<Literal, Literal> halfAdder(Literal a, Literal b) { // a+b return s=sum o=carry bit
-		if (a == NONE) return { b, FALSE };
-		if (b == NONE) return { a, TRUE };
+		if (a == None) return { b, FALSE };
+		if (b == None) return { a, TRUE };
 
 		int s = getNewVar(), o = getNewVar();
 		addClause({ -a,-b,o });
@@ -99,9 +99,9 @@ public:
 		return { s,o };
 	}
 	pair<Literal, Literal> fullAdder(Literal a, Literal b, Literal c) {
-		if (a == NONE) return halfAdder(b, c);
-		if (b == NONE) return halfAdder(a, c);
-		if (c == NONE) return halfAdder(a, b);
+		if (a == None) return halfAdder(b, c);
+		if (b == None) return halfAdder(a, c);
+		if (c == None) return halfAdder(a, b);
 
 		Literal s = getNewVar(), o = getNewVar();
 
@@ -134,9 +134,9 @@ public:
 		vector<int> ret(a.size() + 1);
 
 
-		b.resize(a.size(), NONE);
+		b.resize(a.size(), None);
 
-		int carry = NONE;
+		int carry = None;
 
 		REP(i, a.size()) {
 			pair<Literal, Literal> buf = fullAdder(a[i], b[i], carry);
