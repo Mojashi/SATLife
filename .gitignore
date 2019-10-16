@@ -344,4 +344,5 @@ ASALocalRun/
 healthchecksdb
 
 *.exe
-out.txt
+*/out.txt
+solver/

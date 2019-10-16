@@ -175,7 +175,8 @@ public:
 		vector<bool> ans(varCount + 1);
 		output("cnf.dimacs");
 
-		system("glucose-syrup -nthreads=2 cnf.dimacs out.txt");
+		//system("glucose-syrup -nthreads=2 cnf.dimacs out.txt");
+		system("\"..\\solver\\Maple\" cnf.dimacs out.txt");
 
 		ifstream ifs("out.txt");
 
