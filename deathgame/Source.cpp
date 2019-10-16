@@ -41,15 +41,14 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 	}
 
 	{
-		vector<int> rowc, colc;
+		vector<int> rowcolc;
 		REP(i, patsize.second) {
-			rowc.push_back(boardNum[0][1][i + 1]);
+			rowcolc.push_back(boardNum[0][1][i + 1]);
 		}
-		cnf.addClause(rowc);
 		REP(i, patsize.first) {
-			colc.push_back(boardNum[0][i + 1][1]);
+			rowcolc.push_back(boardNum[0][i + 1][1]);
 		}
-		cnf.addClause(colc);
+		cnf.addClause(rowcolc);
 	}
 
 	REP(k, loop - 1) {
@@ -70,11 +69,11 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 					rep(b, a + 1, tar.size()) {
 						rep(c, b + 1, tar.size()) {
 							rep(d, c + 1, tar.size()) {
-								vector<Literal> buf = {-tar[a],-tar[b] ,-tar[c] ,-tar[d], -boardNum[k + 1][i][j] };
+								Clause buf = {-tar[a],-tar[b] ,-tar[c] ,-tar[d], -boardNum[k + 1][i][j] };
 								cnf.addClause(buf);
 							}
 
-							vector<Literal> buf(tar);
+							Clause buf(tar);
 							buf[a] *= -1;
 							buf[b] *= -1;
 							buf[c] *= -1;
@@ -82,7 +81,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 							cnf.addClause(buf);
 						}
 
-						vector<Literal> buf(tar);
+						Clause buf(tar);
 						buf[a] *= -1;
 						buf[b] *= -1;
 						buf.push_back(-boardNum[k][i][j]);
@@ -94,7 +93,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 						cnf.addClause(buf);
 					}
 
-					vector<Literal> buf(tar);
+					Clause buf(tar);
 					buf.erase(buf.begin() + a);
 					buf.push_back(-boardNum[k + 1][i][j]);
 					cnf.addClause(buf);
@@ -103,7 +102,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 		}
 
 		if (k != 0) {
-			vector<int> eqs;
+			Clause eqs;
 			rep(i, 1, height - 1) {
 				rep(j, 1, width - 1) {
 					eqs.push_back(-cnf.Equal(boardNum[k][i][j], boardNum[0][i][j]));
@@ -114,7 +113,7 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 		}
 	}
 	for (auto abd : avoid) {
-		vector<int> eqs;
+		Clause eqs;
 		REP(i, abd.size()) {
 			REP(j, abd[0].size()) {
 				eqs.push_back(abd[i][j] ? -boardNum[0][i][j] : boardNum[0][i][j]);
