@@ -4,52 +4,67 @@
 #include <windows.h>
 #include <assert.h>
 #include <vector>
+#include <map>
 #include "../header/CNF.h"
+
 #include "../header/LifeUtil.h"
 
 using namespace std;
+//
+//vector<vector<vector<int>>> templatePattern(int height, int width, int loop, int moveX = 0, int moveY = 0, int rot = 0) {
+//
+//	assert(rot <= 3 && rot >= 0);
+//
+//
+//	REP(i, patsize.first) {
+//		REP(j, patsize.second) {
+//			pair<int, int> co = { i,j };
+//			REP(k, rot) co = rotate90(patsize.first, patsize.second, co);
+//
+//			boardNum[loop - 1][co.first + 1 + moveY][co.second + 1 + moveX] = boardNum[0][1 + i][1 + j] = cnf.getNewVar();
+//		}
+//	}
+//
+//	{
+//		Clause rowcolc;
+//		REP(i, patsize.second) {
+//			rowcolc.push_back(boardNum[0][1][i + 1]);
+//		}
+//		REP(i, patsize.first) {
+//			rowcolc.push_back(boardNum[0][i + 1][1]);
+//		}
+//		cnf.addClause(rowcolc);
+//	}
+//}
 
-vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int moveX = 0, int moveY = 0, int rot = 0, vector<vector<vector<int>>> avoid = {}) {
+vector<vector<vector<int>>> searchPattern(vector<vector<vector<string>>> pattern ,vector<vector<vector<int>>> avoid = {}) {
 
-	pair<int, int> patsize = { height, width };
+	assert(pattern.size() > 0 && pattern[0].size() > 0 && pattern[0][0].size() > 0);
+	pair<int, int> patsize = { pattern[0].size(), pattern[0][0].size() };
 
-	assert(rot <= 3 && rot >= 0);
-
-	height += 2 + moveY;
-	width += 2 + moveX;
-	loop += 1;
-
+	int height = patsize.first + 2,	width = patsize.second + 2,	loop = pattern.size();
+	map<string, int> varalloc;
 	vector<vector<vector<Literal>>> boardNum(loop, vector<vector<int>>(height, vector<int>(width, CNF::False)));
 
 	CNF cnf;
 
-	rep(k, 1, loop - 1) {
+	varalloc["0"] = CNF::False;
+	varalloc["1"] = CNF::True;
+
+	rep(k, 0, loop) {
 		rep(i, 1, height - 1) {
 			rep(j, 1, width - 1) {
-				boardNum[k][i][j] = cnf.getNewVar();
+				string cs(pattern[k][i - 1][j - 1]);
+				if (cs != "*" && varalloc.count(cs) == 0)
+					varalloc[cs] = cnf.getNewVar();
+				if(cs ==  "*")
+					boardNum[k][i][j] = cnf.getNewVar();
+				else
+					boardNum[k][i][j] = varalloc[cs];
 			}
 		}
 	}
 
-	REP(i, patsize.first) {
-		REP(j, patsize.second) {
-			pair<int, int> co = { i,j };
-			REP(k, rot) co = rotate90(patsize.first, patsize.second, co);
-
-			boardNum[loop - 1][co.first + 1 + moveY][co.second + 1 + moveX] =  boardNum[0][1 + i][1 + j] = cnf.getNewVar();
-		}
-	}
-
-	{
-		vector<int> rowcolc;
-		REP(i, patsize.second) {
-			rowcolc.push_back(boardNum[0][1][i + 1]);
-		}
-		REP(i, patsize.first) {
-			rowcolc.push_back(boardNum[0][i + 1][1]);
-		}
-		cnf.addClause(rowcolc);
-	}
 
 	REP(k, loop - 1) {
 		REP(i,  height ) {
@@ -139,11 +154,24 @@ vector<vector<vector<int>>> searchPattern(int height, int width, int loop, int m
 }
 
 int main() {
-	int w, h, loop, movex, movey, rot;
-	cin >> w >> h >> loop >> movex >>  movey >> rot;
+	int w, h, loop, movex, movey, rot, padw, padh;
 	vector<vector<vector<int>>> avoid;
+
+	cin >> w >> h >> loop;
+	vector<vector<vector<string>>> pattern(loop,vector<vector<string>>(h, vector<string>(w)));
+
+	REP(k, loop) {
+		REP(i, h) {
+			REP(j, w) {
+				cin >> pattern[k][i][j];
+			}
+		}
+		//pattern[k] = padding(pattern[k], padh, padw, string("*"));
+	}
+
 	while (1) {
-		vector<vector<vector<int>>> board = searchPattern(h, w, loop, movex, movey, rot, avoid);
+		cout << "Preprocessing" << endl;
+		vector<vector<vector<int>>> board = searchPattern(pattern, avoid);
 
 
 		for (auto bd : board) {
@@ -160,8 +188,10 @@ int main() {
 		cin >> cont;
 		if (cont)
 			avoid.push_back(board[0]);
-		else
+		else {
+			encode(board[0]);
 			break;
+		}
 	}
 	return 0;
 }

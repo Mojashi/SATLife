@@ -87,7 +87,7 @@ public:
 		if (b == None) return { a, TRUE };
 
 		int s = getNewVar(), o = getNewVar();
-		addClause({ -a,-b,o });
+		addClause({ -a,-b,o }); 
 		addClause({ a,-o });
 		addClause({ b,-o });
 
